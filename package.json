@@ -1,0 +1,14 @@
+{
+  "name": "nutrifit-qa-automation",
+  "version": "1.0.0",
+  "description": "Suite de automação de testes (Playwright) para o app NutriFit (Base44) - portfolio de QA",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:report": "playwright show-report",
+    "codegen": "playwright codegen https://blazing-nutri-fit-plan.base44.app"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.48.0"
+  }
+}
