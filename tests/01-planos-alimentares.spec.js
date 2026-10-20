@@ -19,14 +19,18 @@ test.describe('RF06 / RN02 - Criação de Plano Alimentar Manual (tela Novo Plan
     await page.getByPlaceholder('Descrição do plano...').fill('Plano criado via Playwright para fins de teste.');
 
     // Objetivo: dropdown com "Manter" selecionado por padrão
-    await page.getByLabel('Objetivo').selectOption({ label: 'Manter' });
+        await page.getByRole('combobox').filter({ hasText: 'Manter' }).click();
+    await page.getByRole('option', { name: 'Manter', exact: true }).click();
 
-    await page.getByLabel('Calorias/dia').fill('2000');
+       await page.getByRole('spinbutton').fill('2000');
 
-    // TODO: ajustar o texto exato exibido para "Atribuir a" após confirmar no app
-    // await page.getByLabel(/atribuir a/i).click();
-    // await page.getByRole('option', { name: 'usuario.teste@nutrifit.com' }).click();
-
+    // Atribuir a: seleciona o primeiro usuário disponível na lista
+    // (não sabemos de antemão quais e-mails de teste existem no seu banco,
+    // então pegamos um email específico em vez de chutar um e-mail fixo)
+  
+    await page.getByRole('combobox').filter({ hasText: 'Selecionar usuário' }).click();
+    await page.getByRole('option').first().click();
+    
     await page.getByRole('button', { name: /criar plano/i }).click();
 
     // TODO: substituir pela mensagem de sucesso real exibida pelo app
@@ -35,22 +39,22 @@ test.describe('RF06 / RN02 - Criação de Plano Alimentar Manual (tela Novo Plan
 
   // CT-013 (adaptado) - tentativa de criar plano sem nome (campo obrigatório)
   test('CT-013 - bloquear criação de plano sem nome', async ({ page }) => {
-    await page.getByPlaceholder('Descrição do plano...').fill('Plano sem nome, deve falhar.');
-    await page.getByLabel('Calorias/dia').fill('1800');
+  await page.getByPlaceholder('Descrição do plano...').fill('Plano sem nome, deve falhar.');
+  await page.getByRole('spinbutton').fill('1800');
 
-    await page.getByRole('button', { name: /criar plano/i }).click();
+  // O app impede a submissão desabilitando o botão "Criar plano"
+  // em vez de permitir o clique e mostrar erro depois — validação
+  // preventiva feita no próprio formulário.
+  await expect(page.getByRole('button', { name: /criar plano/i })).toBeDisabled();
 
-    // TODO: confirmar a mensagem real de validação (ex: "Nome do plano é obrigatório")
-    // await expect(page.getByText(/obrigatório/i)).toBeVisible();
-
-    // Verificação mínima: o modal "Novo plano" não deve fechar em caso de erro
-    await expect(page.getByText('Novo plano')).toBeVisible();
+  // O modal deve continuar aberto (nenhuma submissão ocorreu)
+  await expect(page.getByText('Novo plano')).toBeVisible();
   });
 
   // CT-034 (adaptado) - calorias/dia com valor inválido (negativo)
   test('CT-034 - bloquear plano com calorias/dia negativas', async ({ page }) => {
     await page.getByPlaceholder('Ex: Plano de emagrecimento').fill('Plano Calorias Inválidas');
-    await page.getByLabel('Calorias/dia').fill('-50');
+   await page.getByRole('spinbutton').fill('-50');
 
     await page.getByRole('button', { name: /criar plano/i }).click();
 
