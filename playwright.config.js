@@ -1,5 +1,7 @@
 // @ts-check
 const { defineConfig, devices } = require('@playwright/test');
+const fs = require('fs');
+const hasAuth = fs.existsSync('auth.json');
 
 module.exports = defineConfig({
   testDir: './tests',
@@ -15,7 +17,7 @@ module.exports = defineConfig({
     video: 'retain-on-failure',
 
     
-     storageState: 'auth.json',
+     storageState: hasAuth ? 'auth.json' : undefined,
   },
 
   projects: [

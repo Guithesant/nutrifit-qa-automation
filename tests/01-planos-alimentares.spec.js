@@ -4,7 +4,9 @@
 // print da tela. Rode `npm run codegen` para confirmar/ajustar os seletores exatos
 // (o Base44 pode usar nomes de campo internos diferentes do texto exibido).
 
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('@playwright/test');const fs = require('fs');
+test.skip(!fs.existsSync('auth.json'), 'Requer sessão autenticada (auth.json): roda apenas localmente');
+
 
 test.describe('RF06 / RN02 - Criação de Plano Alimentar Manual (tela Novo Plano)', () => {
 
@@ -13,8 +15,8 @@ test.describe('RF06 / RN02 - Criação de Plano Alimentar Manual (tela Novo Plan
     await page.getByRole('button', { name: /novo/i }).click();
   });
 
-  // CT-016 (adaptado) - criação de plano manual com dados válidos
-  test('CT-016 - criar plano manual com todos os dados válidos', async ({ page }) => {
+  // CT-041 (adaptado) - criação de plano manual com dados válidos
+  test('CT-041 - criar plano manual com todos os dados válidos', async ({ page }) => {
     await page.getByPlaceholder('Ex: Plano de emagrecimento').fill('Plano de Teste Automatizado');
     await page.getByPlaceholder('Descrição do plano...').fill('Plano criado via Playwright para fins de teste.');
 
@@ -37,8 +39,8 @@ test.describe('RF06 / RN02 - Criação de Plano Alimentar Manual (tela Novo Plan
     // await expect(page.getByText(/plano criado com sucesso/i)).toBeVisible();
   });
 
-  // CT-013 (adaptado) - tentativa de criar plano sem nome (campo obrigatório)
-  test('CT-013 - bloquear criação de plano sem nome', async ({ page }) => {
+  // CT-042 (adaptado) - tentativa de criar plano sem nome (campo obrigatório)
+  test('CT-042 - bloquear criação de plano sem nome', async ({ page }) => {
   await page.getByPlaceholder('Descrição do plano...').fill('Plano sem nome, deve falhar.');
   await page.getByRole('spinbutton').fill('1800');
 
@@ -51,8 +53,8 @@ test.describe('RF06 / RN02 - Criação de Plano Alimentar Manual (tela Novo Plan
   await expect(page.getByText('Novo plano')).toBeVisible();
   });
 
-  // CT-034 (adaptado) - calorias/dia com valor inválido (negativo)
-  test('CT-034 - bloquear plano com calorias/dia negativas', async ({ page }) => {
+  // CT-043 (adaptado) - calorias/dia com valor inválido (negativo)
+  test('CT-043 - bloquear plano com calorias/dia negativas', async ({ page }) => {
     await page.getByPlaceholder('Ex: Plano de emagrecimento').fill('Plano Calorias Inválidas');
    await page.getByRole('spinbutton').fill('-50');
 
